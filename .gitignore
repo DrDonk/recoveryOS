@@ -159,9 +159,10 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-.dmg
-.chunklist
-.vmdk
-.qcow2
-.vhdx
-.raw
+*.dmg
+*.chunklist
+*.vmdk
+*.qcow2
+*.vhdx
+*.raw
+
