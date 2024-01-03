@@ -18,22 +18,18 @@ the development of the tool, so 3.10 or a later version should be installed.
 
 You will need to have qemu-img utility, from QEMU, on the path.
 
-* Linux - These can be installed from Linux repos, for example Debian based distros:
+* Linux - These can be installed from Linux repos, for example Debian based distros
 
     `sudo apt install -y qemu-utils`
 
-
-* macOS - use [brew](https://brew.sh) package manager install on macOS
-installed:
+* macOS - use [brew](https://brew.sh) package manager to install on macOS
 
     `brew install qemu`
-
 
 * Windows - use [Chocolatey](https://chocolatey.org) or [Scoop](https://scoop.sh) to install on Windows
 
     `choco/scoop install qemu`
    
-
 ## Instructions
 1. Unzip the archive maintaining the folder structure
 2. Open a console/shell in the folder with the tool
@@ -53,6 +49,7 @@ Create a recoveryOS virtual image
 ```
 
 After downloading the DMG fie you are then prompted to select the virtual formats you want created from the base image.
+
 ```
 Convert the recoveryOS virtual image
 1. VMware VMDK
