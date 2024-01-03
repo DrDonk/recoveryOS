@@ -80,7 +80,7 @@ def main():
     raw = f'{basename}.raw'
 
     # Print the menu
-    print('Create a recoveryOS virtual image')
+    print('Convert the recoveryOS virtual image')
     print('1. VMware VMDK')
     print('2. QEMU QCOW2')
     print('3. Micorsoft VHDX')
