@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-# SPDX-FileCopyrightText: © 2022-23 David Parsons
+# SPDX-FileCopyrightText: © 2022-24 David Parsons
 # SPDX-License-Identifier: MIT
 
 import macrecovery
