@@ -68,6 +68,7 @@ def main():
                 '-b', boardid,
                 '-m', '00000000000000000',
                 '--basename', basename,
+                '-o', '.',
                 '-os', 'latest']
 
     macrecovery.main()
