@@ -81,7 +81,7 @@ Just re-run the command and it should work.
 
 
 ## Acknowledgements
-This tool wraps several other great open source commands. Thanks to the authors of those tools.
+This tool wraps several other great open source software. Thanks to the authors of those tools.
 
 * macrecovery.py - https://github.com/acidanthera/OpenCorePkg
 * qemu - https://www.qemu.org
