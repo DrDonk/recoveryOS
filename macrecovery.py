@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Gather recovery information for Macs.
@@ -204,12 +204,15 @@ def save_image(url, sess, filename='', directory=''):
         'Cookie': '='.join(['AssetToken', sess])
     }
 
+    if not os.path.exists(directory):
+        os.mkdir(directory)
+
     if filename == '':
         filename = os.path.basename(purl.path)
     if filename.find('/') >= 0 or filename == '':
         raise RuntimeError('Invalid save path ' + filename)
 
-    print(f'Saving {url} to {filename}...')
+    print(f'Saving {url} to {directory}/{filename}...')
 
     with open(os.path.join(directory, filename), 'wb') as fh:
         response = run_query(url, headers, raw=True)
@@ -279,10 +282,10 @@ def action_download(args):
     if args.verbose:
         print(info)
     print(f'Downloading {info[INFO_PRODUCT]}...')
-    dmgname = '' if args.basename == '' else args.basename + '.dmg'
-    dmgpath = save_image(info[INFO_IMAGE_LINK], info[INFO_IMAGE_SESS], dmgname, args.outdir)
     cnkname = '' if args.basename == '' else args.basename + '.chunklist'
     cnkpath = save_image(info[INFO_SIGN_LINK], info[INFO_SIGN_SESS], cnkname, args.outdir)
+    dmgname = '' if args.basename == '' else args.basename + '.dmg'
+    dmgpath = save_image(info[INFO_IMAGE_LINK], info[INFO_IMAGE_SESS], dmgname, args.outdir)
     try:
         verify_image(dmgpath, cnkpath)
         return 0
@@ -457,8 +460,8 @@ def main():
                         help='Action to perform: "download" - performs recovery downloading,'
                         ' "selfcheck" checks whether MLB serial validation is possible, "verify" performs'
                         ' MLB serial verification, "guess" tries to find suitable mac model for MLB.')
-    parser.add_argument('-o', '--outdir', type=str, default=os.getcwd(),
-                        help='customise output directory for downloading, defaults to current directory')
+    parser.add_argument('-o', '--outdir', type=str, default='com.apple.recovery.boot',
+                        help='customise output directory for downloading, defaults to com.apple.recovery.boot')
     parser.add_argument('-n', '--basename', type=str, default='',
                         help='customise base name for downloading, defaults to remote name')
     parser.add_argument('-b', '--board-id', type=str, default=RECENT_MAC,
