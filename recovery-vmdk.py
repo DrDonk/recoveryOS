@@ -30,6 +30,7 @@ def main():
     print('3. Monterey')
     print('4. Ventura')
     print('5. Sonoma')
+    print('6. Sequoia')
     print('')
     print('0. Exit')
     # And get the input
@@ -55,6 +56,10 @@ def main():
             break
         if selection == '5':
             basename = 'sonoma'
+            boardid = 'Mac-BE088AF8C5EB4FA2'
+            break
+        if selection == '6':
+            basename = 'sequoia'
             boardid = 'Mac-7BA5B2D9E42DDD94'
             break
         if selection == '0':
