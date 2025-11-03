@@ -11,6 +11,7 @@ LDFLAGS="-X main.Version=$VERSION -X main.BuildDate=$BUILD_DATE -X main.Commit=$
 
 mkdir -p build
 cp -v README.md ./build
+cp -v CHANGELOG.md ./build
 cp -v LICENSE ./build
 cp -v recovery_urls.txt ./build
 cp -v boards.json ./build
