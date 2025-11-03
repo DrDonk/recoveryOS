@@ -31,6 +31,7 @@ You will need to have qemu-img utility, from QEMU, on the path.
 ```
 OC4VM recoveryOS Image Maker
 ============================
+Version 1.0.0-59580e8
 (c) David Parsons 2022-25
 
 Create a recoveryOS virtual image
@@ -41,6 +42,8 @@ Create a recoveryOS virtual image
 5. Sonoma
 6. Sequoia
 7. Tahoe
+
+0. Exit
 ```
 
 After downloading the DMG fie you are then prompted to select the virtual formats you want created from the base image.

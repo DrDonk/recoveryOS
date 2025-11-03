@@ -24,6 +24,13 @@ var osVersions = []OSVersion{
 	{"Tahoe", "Mac-CFF7D910A743CAAF"},
 }
 
+// Version information - set during build
+var (
+	Version   = "dev"
+	BuildDate = "unknown"
+	Commit    = "unknown"
+)
+
 func convert(format, input, output string) error {
 	fmt.Printf("Converting to %s:\n", format)
 	
@@ -98,7 +105,8 @@ func readInput(prompt string) string {
 
 func printBanner() {
 	fmt.Println("\nOC4VM recoveryOS Image Maker")
-	fmt.Println("=============================")
+	fmt.Println("============================")
+	fmt.Printf("Version %s-%s\n", Version, Commit)
 	fmt.Println("(c) David Parsons 2022-25\n")
 }
 
