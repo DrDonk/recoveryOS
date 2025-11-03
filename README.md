@@ -2,17 +2,10 @@
 
 ## Introduction
 This is a utility to download the recovery image, recoveryOS, for macOS from Apple's servers and create a bootable 
-virtual disk file that can be used to start an Internet installation of macOS.
+virtual disk file that can be used to start an Internet installation of macOS. It also has a Go port of the OpenCorePkg
+macrecovery tool.
 
 ## Pre-requisites
-
-###  Python 3
-The tool is written in Python 3 and so Python must be installed on the host computer. Python 3.10 was used for 
-the development of the tool, so 3.10 or a later version should be installed.
-
-* Linux   - Use your distro package manager
-* macOS   - `brew install python3`
-* Windows - Recommended way is to install Python 3.10+ from the Microsoft App Store, or use Chocolatey or Scoop.
 
 ### qemu-img
 
@@ -32,13 +25,13 @@ You will need to have qemu-img utility, from QEMU, on the path.
    
 ## Instructions
 1. Unzip the archive maintaining the folder structure
-2. Open a console/shell in the folder with the tool
-3. Run the tool: `python3 recovery-vmdk.py`
+2. Open a console/shell in the folder with the tool for your OS and architecture.
+3. Run the tool: `recoveryOS`
 4. The menu will be displayed and just select the macOS version you want using the number on the menu.
 ```
 OC4VM recoveryOS Image Maker
 ============================
-(c) David Parsons 2022-24
+(c) David Parsons 2022-25
 
 Create a recoveryOS virtual image
 1. Catalina
@@ -46,6 +39,8 @@ Create a recoveryOS virtual image
 3. Monterey
 4. Ventura
 5. Sonoma
+6. Sequoia
+7. Tahoe
 ```
 
 After downloading the DMG fie you are then prompted to select the virtual formats you want created from the base image.
@@ -81,7 +76,7 @@ Just re-run the command and it should work.
 
 
 ## Acknowledgements
-This tool wraps several other great open source software. Thanks to the authors of those tools.
+This tool wraps is based on great open source software. Thanks to the authors of those tools.
 
 * macrecovery.py - https://github.com/acidanthera/OpenCorePkg
 * qemu - https://www.qemu.org
