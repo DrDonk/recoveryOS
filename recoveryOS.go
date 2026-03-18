@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strings"
 )
@@ -61,21 +62,26 @@ func convert(format, input, output string) error {
 func runMacRecovery(boardID, basename string) error {
 	fmt.Println("Downloading DMG...\n")
 	
+	// Get the directory of the current executable
+	exePath, err := os.Executable()
+	if err != nil {
+	    return fmt.Errorf("Failed to get executable path: %v", err)
+	}
+	exeDir := filepath.Dir(exePath)
+	
 	// Determine the macrecovery executable name
-	macrecoveryCmd := "./macrecovery"
+	macrecoveryName := "macrecovery"
 	if runtime.GOOS == "windows" {
-		macrecoveryCmd = "macrecovery.exe"
+	    macrecoveryName = "macrecovery.exe"
 	}
 	
-	// Check if macrecovery exists
+	// Build the full path
+	macrecoveryCmd := filepath.Join(exeDir, macrecoveryName)
+	
+	// Check if the path and file exists
 	if _, err := os.Stat(macrecoveryCmd); os.IsNotExist(err) {
-		// Try without ./ prefix
-		macrecoveryCmd = "macrecovery"
-		if runtime.GOOS == "windows" {
-			macrecoveryCmd = "macrecovery.exe"
-		}
-	}
-	
+    	 return fmt.Errorf("macrecovery executable not found at: %s", macrecoveryCmd, err)
+}	
 	args := []string{
 		"-action=download",
 		"-board-id=" + boardID,
@@ -107,7 +113,7 @@ func printBanner() {
 	fmt.Println("\nOC4VM recoveryOS Image Maker")
 	fmt.Println("============================")
 	fmt.Printf("Version %s-%s\n", Version, Commit)
-	fmt.Println("(c) David Parsons 2022-25\n")
+	fmt.Println("(c) David Parsons 2022-2026\n")
 }
 
 func selectOS() (string, string, bool) {
