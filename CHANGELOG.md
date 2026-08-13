@@ -2,7 +2,7 @@
 
 All dates are UK DD/MM/YY format.
 
-## 13/08/26
+## 13/08/26 1.0.2
 * Allow recoveryOS executable to be driven from a pipe and respect EOF
 
 ## 18/03/26 1.0.1
