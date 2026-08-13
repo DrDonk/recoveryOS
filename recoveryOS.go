@@ -102,11 +102,14 @@ func runMacRecovery(boardID, basename string) error {
 	return nil
 }
 
-func readInput(prompt string) string {
+func readInput(prompt string) (string, error) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print(prompt)
-	input, _ := reader.ReadString('\n')
-	return strings.TrimSpace(input)
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		return "", err // Return the error to the caller
+	}
+	return strings.TrimSpace(input), nil
 }
 
 func printBanner() {
@@ -125,8 +128,12 @@ func selectOS() (string, string, bool) {
 	fmt.Println("0. Exit")
 	
 	for {
-		selection := readInput("Input menu number: ")
-		
+		selection, err := readInput("Input menu number: ")
+		if err != nil {
+			fmt.Println("\nEOF detected. Exiting...")
+			return "", "", false
+		}
+
 		if selection == "0" {
 			return "", "", false
 		}
@@ -160,8 +167,12 @@ func selectConversion(basename string) error {
 	fmt.Println("0. Exit")
 	
 	for {
-		selection := readInput("Input menu number: ")
-		
+		selection, err := readInput("Input menu number: ")
+		if err != nil {
+			fmt.Println("\nEOF detected. Exiting...")
+			return nil // Exit gracefully on EOF
+		}
+
 		switch selection {
 		case "0":
 			return nil
