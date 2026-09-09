@@ -32,56 +32,65 @@ var (
 	Commit    = "unknown"
 )
 
-func convert(format, input, output string) error {
-	fmt.Printf("Converting to %s:\n", format)
-	
-	// Check if qemu-img is available
+func findQemuImg() (string, error) {
 	qemuImg := "qemu-img"
 	if runtime.GOOS == "windows" {
 		qemuImg = "qemu-img.exe"
 	}
-	
+
 	if _, err := exec.LookPath(qemuImg); err != nil {
-		return fmt.Errorf("qemu-img not found. Please install QEMU first.\n" +
+		return "", fmt.Errorf("qemu-img not found. Please install QEMU first.\n" +
 			"Download from: https://www.qemu.org/download/")
 	}
-	
+
+	return qemuImg, nil
+}
+
+func convert(format, input, output string) error {
+	fmt.Printf("Converting to %s:\n", format)
+
+	// Check if qemu-img is available
+	qemuImg, err := findQemuImg()
+	if err != nil {
+		return err
+	}
+
 	args := []string{"convert", "-f", "dmg", "-O", format, input, output, "-p"}
 	cmd := exec.Command(qemuImg, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	
+
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("conversion failed: %v", err)
 	}
-	
+
 	fmt.Printf("Created %s disk: %s\n", format, output)
 	return nil
 }
 
 func runMacRecovery(boardID, basename string) error {
 	fmt.Println("Downloading DMG...\n")
-	
+
 	// Get the directory of the current executable
 	exePath, err := os.Executable()
 	if err != nil {
-	    return fmt.Errorf("Failed to get executable path: %v", err)
+		return fmt.Errorf("Failed to get executable path: %v", err)
 	}
 	exeDir := filepath.Dir(exePath)
-	
+
 	// Determine the macrecovery executable name
 	macrecoveryName := "macrecovery"
 	if runtime.GOOS == "windows" {
-	    macrecoveryName = "macrecovery.exe"
+		macrecoveryName = "macrecovery.exe"
 	}
-	
+
 	// Build the full path
 	macrecoveryCmd := filepath.Join(exeDir, macrecoveryName)
-	
+
 	// Check if the path and file exists
 	if _, err := os.Stat(macrecoveryCmd); os.IsNotExist(err) {
-    	 return fmt.Errorf("macrecovery executable not found at: %s", macrecoveryCmd, err)
-}	
+		return fmt.Errorf("macrecovery executable not found at: %s", macrecoveryCmd, err)
+	}
 	args := []string{
 		"-action=download",
 		"-board-id=" + boardID,
@@ -90,16 +99,44 @@ func runMacRecovery(boardID, basename string) error {
 		"-outdir=.",
 		"-os-type=latest",
 	}
-	
+
 	cmd := exec.Command(macrecoveryCmd, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	
+
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("macrecovery failed: %v\nMake sure macrecovery is in the same directory or in your PATH", err)
 	}
-	
+
 	return nil
+}
+
+func dmgExists(basename string) bool {
+	dmg := fmt.Sprintf("%s.dmg", basename)
+	info, err := os.Stat(dmg)
+	if err != nil {
+		return false
+	}
+	return !info.IsDir()
+}
+
+func confirmRedownload(basename string) (bool, error) {
+	dmg := fmt.Sprintf("%s.dmg", basename)
+	for {
+		selection, err := readInput(fmt.Sprintf("%s already exists. Redownload? [y/N]: ", dmg))
+		if err != nil {
+			return false, err
+		}
+
+		switch strings.ToLower(selection) {
+		case "", "n", "no":
+			return false, nil
+		case "y", "yes":
+			return true, nil
+		default:
+			fmt.Println("Please answer y or n.")
+		}
+	}
 }
 
 func readInput(prompt string) (string, error) {
@@ -126,7 +163,7 @@ func selectOS() (string, string, bool) {
 	}
 	fmt.Println("")
 	fmt.Println("0. Exit")
-	
+
 	for {
 		selection, err := readInput("Input menu number: ")
 		if err != nil {
@@ -137,7 +174,7 @@ func selectOS() (string, string, bool) {
 		if selection == "0" {
 			return "", "", false
 		}
-		
+
 		// Check numeric selections
 		for i, os := range osVersions {
 			if selection == fmt.Sprintf("%d", i+1) {
@@ -145,7 +182,7 @@ func selectOS() (string, string, bool) {
 				return basename, os.BoardID, true
 			}
 		}
-		
+
 		fmt.Println("Invalid selection. Please try again.")
 	}
 }
@@ -156,7 +193,24 @@ func selectConversion(basename string) error {
 	qcow2 := fmt.Sprintf("%s.qcow2", basename)
 	vhdx := fmt.Sprintf("%s.vhdx", basename)
 	raw := fmt.Sprintf("%s.raw", basename)
-	
+
+	if _, err := findQemuImg(); err != nil {
+		fmt.Println("\nConvert the recoveryOS virtual image")
+		fmt.Printf("ERROR: %v\n\n", err)
+		fmt.Println("0. Exit")
+		for {
+			selection, readErr := readInput("Input menu number: ")
+			if readErr != nil {
+				fmt.Println("\nEOF detected. Exiting...")
+				return nil
+			}
+			if selection == "0" {
+				return nil
+			}
+			fmt.Println("Invalid selection. Please try again.")
+		}
+	}
+
 	fmt.Println("\nConvert the recoveryOS virtual image")
 	fmt.Println("1. VMware VMDK")
 	fmt.Println("2. QEMU QCOW2")
@@ -165,7 +219,7 @@ func selectConversion(basename string) error {
 	fmt.Println("5. All")
 	fmt.Println("")
 	fmt.Println("0. Exit")
-	
+
 	for {
 		selection, err := readInput("Input menu number: ")
 		if err != nil {
@@ -210,25 +264,40 @@ func selectConversion(basename string) error {
 
 func main() {
 	printBanner()
-	
+
 	// Select OS version
 	basename, boardID, ok := selectOS()
 	if !ok {
 		fmt.Println("Exiting...")
 		os.Exit(0)
 	}
-	
-	// Run macrecovery to download
-	if err := runMacRecovery(boardID, basename); err != nil {
-		fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
-		os.Exit(1)
+
+	// Run macrecovery to download, unless the DMG is already present and
+	// the user chooses not to redownload it
+	needDownload := true
+	if dmgExists(basename) {
+		redownload, err := confirmRedownload(basename)
+		if err != nil {
+			fmt.Println("\nEOF detected. Exiting...")
+			os.Exit(0)
+		}
+		needDownload = redownload
 	}
-	
+
+	if needDownload {
+		if err := runMacRecovery(boardID, basename); err != nil {
+			fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
+			os.Exit(1)
+		}
+	} else {
+		fmt.Printf("\nSkipping download, using existing %s.dmg\n", basename)
+	}
+
 	// Select conversion format
 	if err := selectConversion(basename); err != nil {
 		fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
 		os.Exit(1)
 	}
-	
+
 	fmt.Println("\nDone! Your recoveryOS image is ready.")
 }
