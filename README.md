@@ -22,6 +22,8 @@ You will need to have qemu-img utility, from QEMU, on the path.
 * Windows - use [Chocolatey](https://chocolatey.org) or [Scoop](https://scoop.sh) to install on Windows
 
     `choco/scoop install qemu`
+
+  There is also an alternative means to download and install just the qemu-img executable. This is hosted at GitHub project [qemu-img-windows-x64](https://github.com/fdcastel/qemu-img-windows-x64).
    
 ## Instructions
 1. Unzip the archive maintaining the folder structure
@@ -52,7 +54,7 @@ After downloading the DMG fie you are then prompted to select the virtual format
 Convert the recoveryOS virtual image
 1. VMware VMDK
 2. QEMU QCOW2
-3. Micorsoft VHDX
+3. Microsoft VHDX
 4. Raw image
 5. All
 0. Exit
