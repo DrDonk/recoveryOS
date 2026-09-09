@@ -19,11 +19,9 @@ You will need to have qemu-img utility, from QEMU, on the path.
 
     `brew install qemu`
 
-* Windows - use [Chocolatey](https://chocolatey.org) or [Scoop](https://scoop.sh) to install on Windows
+* Windows - use [Scoop](https://scoop.sh) to install on Windows
 
-    `choco/scoop install qemu`
-
-  There is also an alternative means to download and install just the qemu-img executable. This is hosted at GitHub project [qemu-img-windows-x64](https://github.com/fdcastel/qemu-img-windows-x64).
+    `scoop install main/qemu`
    
 ## Instructions
 1. Unzip the archive maintaining the folder structure
